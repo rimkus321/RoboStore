@@ -1,0 +1,47 @@
+-- 1. Создание БД
+IF DB_ID('RoboStore') IS NOT NULL
+    DROP DATABASE RoboStore;
+GO
+
+CREATE DATABASE RoboStore;
+GO
+
+USE RoboStore;
+GO
+
+-- 2. Таблица Robots
+CREATE TABLE Robots (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Model NVARCHAR(100) NOT NULL,
+    Type NVARCHAR(50) NOT NULL CHECK (Type IN ('Бытовой', 'Промышленный')),
+    Price DECIMAL(10,2) NOT NULL,
+    Quantity INT NOT NULL
+);
+GO
+
+-- 3. Таблица Orders
+CREATE TABLE Orders (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    OrderDate DATETIME NOT NULL DEFAULT GETDATE(),
+    RobotId INT NOT NULL,
+    PaymentStatus NVARCHAR(50) NOT NULL,
+    CONSTRAINT FK_Orders_Robots FOREIGN KEY (RobotId) REFERENCES Robots(Id)
+);
+GO
+
+-- 4. Таблица Logs
+CREATE TABLE Logs (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    LogDate DATETIME NOT NULL DEFAULT GETDATE(),
+    Username NVARCHAR(100),
+    ActionType NVARCHAR(50),
+    Description NVARCHAR(MAX)
+);
+GO
+
+-- 5. Тестовые данные
+INSERT INTO Robots (Model, Type, Price, Quantity)
+VALUES
+('RX-100', 'Бытовой', 1200.00, 10),
+('TX-200', 'Промышленный', 5000.00, 5);
+GO
